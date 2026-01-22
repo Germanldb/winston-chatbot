@@ -11,5 +11,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-# Usamos el puerto que nos asigne la plataforma o 8000 por defecto
-CMD uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}
+# Comando de ejecución
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
