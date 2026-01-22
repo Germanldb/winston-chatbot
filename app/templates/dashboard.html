@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Winston & Harry - Chatbot Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a1a1a;
+            --secondary: #c9a56a;
+            /* Gold/Champagne */
+            --bg: #0f0f0f;
+            --card-bg: #1e1e1e;
+            --text: #ffffff;
+            --text-dim: #a0a0a0;
+            --accent: #d4af37;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: var(--primary);
+            border-right: 1px solid #333;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            color: var(--secondary);
+            text-align: center;
+            border-bottom: 1px solid #333;
+            padding-bottom: 1rem;
+        }
+
+        .nav-item {
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            color: var(--text-dim);
+            text-decoration: none;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: rgba(201, 165, 106, 0.1);
+            color: var(--secondary);
+        }
+
+        main {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid #333;
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--secondary);
+        }
+
+        .stat-card h3 {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 600;
+        }
+
+        .recent-messages {
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid #333;
+            padding: 1.5rem;
+        }
+
+        .recent-messages h2 {
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 1rem;
+            color: var(--text-dim);
+            border-bottom: 1px solid #333;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #444;
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+
+        .badge-in {
+            background: #1b4332;
+            color: #74c69d;
+        }
+
+        .badge-out {
+            background: #2d3e50;
+            color: #a2d2ff;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate {
+            animation: fadeIn 0.5s ease forwards;
+        }
+    </style>
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div class="logo">WINSTON & HARRY</div>
+        <nav>
+            <a href="#" class="nav-item active">Dashboard</a>
+            <a href="#" class="nav-item">Mensajes</a>
+            <a href="#" class="nav-item">Clientes</a>
+            <a href="#" class="nav-item">Configuración</a>
+        </nav>
+    </aside>
+
+    <main>
+        <div class="header">
+            <h1>Panel de Control del Chatbot</h1>
+            <div id="last-updated" style="color: var(--text-dim); font-size: 0.8rem;"></div>
+        </div>
+
+        <div class="stats-grid animate">
+            <div class="stat-card">
+                <h3>Total Mensajes</h3>
+                <div class="value" id="stat-total-messages">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>Clientes Únicos</h3>
+                <div class="value" id="stat-total-customers">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>Mensajes (24h)</h3>
+                <div class="value" id="stat-24h">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>Eficiencia AI</h3>
+                <div class="value">98%</div>
+            </div>
+        </div>
+
+        <div class="recent-messages animate" style="animation-delay: 0.2s;">
+            <h2>Historial Reciente</h2>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Contenido</th>
+                            <th>Dirección</th>
+                            <th>Tipo</th>
+                            <th>Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody id="messages-body">
+                        <!-- Content here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        async function fetchData() {
+            try {
+                const [statsRes, messagesRes] = await Promise.all([
+                    fetch('/api/v1/admin/stats'),
+                    fetch('/api/v1/admin/messages')
+                ]);
+
+                if (!statsRes.ok || !messagesRes.ok) throw new Error('Error al conectar con la API');
+
+                const stats = await statsRes.json();
+                const messages = await messagesRes.json();
+
+                // Actualizar Stats
+                document.getElementById('stat-total-messages').innerText = stats.total_messages || 0;
+                document.getElementById('stat-total-customers').innerText = stats.total_customers || 0;
+                document.getElementById('stat-24h').innerText = stats.messages_24h || 0;
+
+                const tbody = document.getElementById('messages-body');
+                tbody.innerHTML = '';
+
+                if (messages.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color: var(--text-dim); padding: 2rem;">No hay mensajes registrados aún. Esperando actividad de WhatsApp...</td></tr>';
+                } else {
+                    messages.forEach(m => {
+                        const tr = document.createElement('tr');
+                        tr.className = 'animate';
+                        tr.innerHTML = `
+                            <td style="font-weight: 600;">${m.customer}</td>
+                            <td title="${m.content}" style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                ${m.content}
+                            </td>
+                            <td><span class="badge ${m.direction === 'inbound' ? 'badge-in' : 'badge-out'}">${m.direction}</span></td>
+                            <td><small>${m.type}</small></td>
+                            <td style="color: var(--text-dim); font-size: 0.85rem;">${new Date(m.timestamp).toLocaleString()}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                }
+
+                document.getElementById('last-updated').innerText = 'Estado: Conectado • ' + new Date().toLocaleTimeString();
+                document.getElementById('last-updated').style.color = '#4ade80';
+
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                document.getElementById('last-updated').innerText = 'Error de conexión • Reintentando...';
+                document.getElementById('last-updated').style.color = '#f87171';
+            }
+        }
+
+        fetchData();
+        setInterval(fetchData, 10000); // Cada 10s
+    </script>
+</body>
+
+</html>
